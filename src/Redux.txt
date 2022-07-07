@@ -1,0 +1,10 @@
+Redux is most useful in cases when:
+
+You have large amounts of application state that are needed in many places in the app
+The app state is updated frequently
+The logic to update that state may be complex
+The app has a medium or large-sized codebase, and might be worked on by many people
+
+installation part from web
+
+npm install react-redux
