@@ -11,13 +11,13 @@ const CakeDetailsSlide = createSlice({
   initialState: {
     data: [],
     status: STATUSES.IDLE,
-    id: 0,
+    // id: 0,
   },
 
   reducers: {
-    GetCakeId(state, action) {
-      state.id = action.payload;
-    },
+    // GetCakeId(state, action) {
+    //   state.id = action.payload;
+    // },
   },
   extraReducers: (builder) => {
     builder
@@ -26,7 +26,7 @@ const CakeDetailsSlide = createSlice({
       })
       .addCase(fetchProductsDetails.fulfilled, (state, action) => {
         state.data = action.payload;
-        console.log("showCake details  error ", state.data);
+        // console.log("showCake details  error ", state.data);
         state.status = STATUSES.IDLE;
       })
       .addCase(fetchProductsDetails.rejected, (state, action) => {
@@ -45,7 +45,7 @@ export const fetchProductsDetails = createAsyncThunk(
       `https://apifromashu.herokuapp.com/api/cake/${idd}`
     );
     const sata = await res.json();
-    console.log("showCake details thanuk  ", sata);
+    // console.log("showCake details thanuk  ", sata);
     return sata;
   }
 );

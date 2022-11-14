@@ -1,23 +1,69 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../app/ProductSlice";
+// import { fetchProductsDetails } from "../app/CakeDetailsSlice";
 import { fetchProductsDetails } from "../app/CakeDetailsSlice";
 import { GetCakeId } from "../app/CakeDetailsSlice";
 import { STATUSES } from "../app/ProductSlice";
-import { add } from "../app/CartSlice";
+import ReactPaginate from "react-paginate";
+
 import { useNavigate, useParams } from "react-router-dom";
 const Product = () => {
-  const idd = useParams;
+  const id = useParams;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { data: products, status } = useSelector((state) => state.product);
   console.log("hee", products);
+  // useEffect(() => {
+  //   dispatch(fetchProducts());
+  // }, []);
+
+  // -----------------------------------------------------------------------------------
+  const [productss, setproductss] = useState([]);
+  const [pageCount, setpageCount] = useState(0);
+
+  let limit = 10;
+
   useEffect(() => {
-    dispatch(fetchProducts());
-  }, []);
+    const getComments = async () => {
+      const res = await fetch(
+        // `http://localhost:3002/comments?_page=1&_limit=${limit}`
+        `https://jsonplaceholder.typicode.com/comments?_page=1&_limit=${limit}`
+      );
+      const data = await res.json();
+      const total = res.headers.get("x-total-count");
+      setpageCount(3);
+      // console.log(Math.ceil(total/12));
+      setproductss(data);
+    };
+
+    getComments();
+  }, [limit]);
+
+  const fetchComments = async (currentPage) => {
+    const res = await fetch(
+      // `http://localhost:3004/comments?_page=${currentPage}&_limit=${limit}`
+      `https://jsonplaceholder.typicode.com/comments?_page=${currentPage}&_limit=${limit}`
+    );
+    const data = await res.json();
+    return data;
+  };
+
+  const handlePageClick = async (data) => {
+    console.log(data.selected);
+
+    let currentPage = data.selected + 1;
+
+    const commentsFormServer = await fetchComments(currentPage);
+
+    setproductss(commentsFormServer);
+    // scroll to the top
+    //window.scrollTo(0, 0)
+  };
+  // -----------------------------------------------------------------------------------
 
   const handleAdd = (cakeid) => {
-    dispatch(GetCakeId(cakeid));
+    dispatch(fetchProductsDetails(cakeid));
     navigate(`/showcakedetails/${cakeid}`);
   };
 
@@ -29,6 +75,25 @@ const Product = () => {
   }
   return (
     <div className="flex gap-x-8 mx-5 flex-wrap justify-between">
+      <ReactPaginate
+        previousLabel={"previous"}
+        nextLabel={"next"}
+        breakLabel={"..."}
+        pageCount={pageCount}
+        marginPagesDisplayed={2}
+        pageRangeDisplayed={3}
+        onPageChange={handlePageClick}
+        containerClassName={"pagination justify-content-center"}
+        pageClassName={"page-item"}
+        pageLinkClassName={"page-link"}
+        previousClassName={"page-item"}
+        previousLinkClassName={"page-link"}
+        nextClassName={"page-item"}
+        nextLinkClassName={"page-link"}
+        breakClassName={"page-item"}
+        breakLinkClassName={"page-link"}
+        activeClassName={"active"}
+      />
       {products.data &&
         products.data.map((product) => (
           <div

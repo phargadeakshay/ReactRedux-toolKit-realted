@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
 
 const Login = () => {
@@ -31,31 +32,53 @@ const Login = () => {
   // }, []);
 
   const handleLogin = async (info) => {
-    const { email, password } = info;
-    const res = await fetch("https://apifromashu.herokuapp.com/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Login it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const { email, password } = info;
+        const res = await fetch("https://apifromashu.herokuapp.com/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        });
+
+        const response = await res.json();
+        localStorage.setItem("akshaytoken", response.token);
+        console.log("response", response);
+        console.log("response token", response.token);
+        if (response.token) {
+          // Swal.fire("Logged", "Succefully Login");
+          navigate("/");
+          // window.location.reload();
+        }
+
+        // Swal.fire("Login!", "Your login has been succefull.", "success");
+        toast.success("Lorem ipsum dolor");
+      }
     });
 
-    const response = await res.json();
-    localStorage.setItem("akshaytoken", response.token);
-    console.log("response", response);
-    console.log("response token", response.token);
-    if (response.token) {
-      Swal.fire("Logged", "Succefully Login");
-      navigate("/");
-      // window.location.reload();
-    }
+    // toast("Wow so easy!");
   };
-
+  const notify = () =>
+    toast.success("Wow so easy!", { type: "info", theme: "colored" });
   return (
     <div className="flex justify-center ">
+      <div>
+        <button onClick={notify}>Notify!</button>
+        {/* <ToastContainer /> */}
+      </div>
       <div className="flex w-8/12 bg-white mt-14 mb-5 justify-end shadow-2xl">
         <div className="grid grid-cols-6">
           <div className="col-start-1 col-span-3 p-5">

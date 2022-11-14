@@ -7,7 +7,7 @@ const Navbar = () => {
   let token = localStorage.getItem("akshaytoken");
   const [Condition, setCondition] = useState(true);
   const [buttonn, setbuttonn] = useState("Login");
-  const items = useSelector((state) => state.cart);
+  const items = useSelector((state) => state.showItemInCart);
   // console.log("tokennn ", token);
   // useEffect(() => {
   //   const token = localStorage.getItem("akshaytoken");
